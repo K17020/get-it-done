@@ -22,6 +22,14 @@ class Task(db.Model):
         self.name = name
         self.completed = False
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
 
