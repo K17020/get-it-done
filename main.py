@@ -22,6 +22,7 @@ class Task(db.Model):
         self.name = name
         self.completed = False
 
+# The class handles usernames and passwords in a database
 class User(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
@@ -32,8 +33,9 @@ class User(db.Model):
         self.email = email
         self.password = password
 
-@app.route('/login')
+@app.route('/login', methods=['POST','GET'])
 def login():
+    
     return render_template('login.html')
 
 @app.route('/register')
