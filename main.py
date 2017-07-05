@@ -35,11 +35,38 @@ class User(db.Model):
 
 @app.route('/login', methods=['POST','GET'])
 def login():
-    
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first() # return username with given email if it exist if not it will return none
+        if user and user.password == password: #checks to see if user and passwords match as well as well if the passwords match the user 
+            # TODO - 'rememvber that user has logged in"
+            return redirect('/')
+            # TODO - 'why the log in failed'
+            return '<h1>Error!</h1>'
+            
     return render_template('login.html')
 
-@app.route('/register')
+@app.route('/register', methods=['POST','GET'])
 def register():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        verify = request.form['verify']
+        
+        existing_user = user = User.query.filter_by(email=email).first() # Checks to see if the user exists in the database
+        if not existing_user: # if not create a new user with the data provided
+            new_user = User(email, password)
+            db.session.add(new_user)
+            db.session.commit()
+            # TODO - remember the user has logged in
+            return redirect('/')
+        else:
+        # TODO tell users that they already exist in the database
+        # TODO - very if is the passwords match
+            return '<h1>Duplicate User</h1>' # if they do exist return this message
+
+
     return render_template('register.html')
 
 @app.route('/', methods=['POST', 'GET'])
