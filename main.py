@@ -14,10 +14,11 @@ class Task(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120))
+    completed = db.Colum(db.Boolean)
 
     def __init__(self, name):
         self.name = name
-
+        self.completed = False
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
