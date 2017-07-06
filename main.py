@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy 
 
 
@@ -40,7 +40,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(email=email).first() # return username with given email if it exist if not it will return none
         if user and user.password == password: #checks to see if user and passwords match as well as well if the passwords match the user 
-            # TODO - 'rememvber that user has logged in"
+            session['email'] = email # rememvber that user has logged in
             return redirect('/')
             # TODO - 'why the log in failed'
             return '<h1>Error!</h1>'
@@ -59,7 +59,7 @@ def register():
             new_user = User(email, password)
             db.session.add(new_user)
             db.session.commit()
-            # TODO - remember the user has logged in
+            session['email'] = email # remember the user has logged in
             return redirect('/')
         else:
         # TODO tell users that they already exist in the database
@@ -69,6 +69,9 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/logout')
+    del session['email']
+    return redirect('/')
 @app.route('/', methods=['POST', 'GET'])
 def index():
 
