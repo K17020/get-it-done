@@ -9,6 +9,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://get-it-done:beproductive@localhost:8889/get-it-done'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'rF1iDxY6qlTmvyJl'
 
 
 # This class creates a table in the database get-it-done
@@ -33,6 +34,14 @@ class User(db.Model):
         self.email = email
         self.password = password
 
+# Checks to see if the user has logged in before displaying the page
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'register']
+    if request.endpoint not in allowed_routes and 'email' not in session:
+        redirect('/login')
+
+
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'POST':
@@ -40,7 +49,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(email=email).first() # return username with given email if it exist if not it will return none
         if user and user.password == password: #checks to see if user and passwords match as well as well if the passwords match the user 
-            session['email'] = email # rememvber that user has logged in
+            session['email'] = email # remember that user has logged in
             return redirect('/')
             # TODO - 'why the log in failed'
             return '<h1>Error!</h1>'
@@ -69,9 +78,12 @@ def register():
 
     return render_template('register.html')
 
-@app.route('/logout')
-    del session['email']
-    return redirect('/')
+# logs the user out of the app
+@app.route('/logout', methods=['GET'])
+def logout():
+    del session['email'] # removes the email from the session to log you out
+    return redirect('/login')
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
 
