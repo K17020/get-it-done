@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session
+from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy 
 
 
@@ -39,7 +39,7 @@ class User(db.Model):
 def require_login():
     allowed_routes = ['login', 'register']
     if request.endpoint not in allowed_routes and 'email' not in session:
-        redirect('/login')
+        return redirect('/login')
 
 
 @app.route('/login', methods=['POST','GET'])
@@ -50,9 +50,11 @@ def login():
         user = User.query.filter_by(email=email).first() # return username with given email if it exist if not it will return none
         if user and user.password == password: #checks to see if user and passwords match as well as well if the passwords match the user 
             session['email'] = email # remember that user has logged in
+            flash('Logged in')
             return redirect('/')
             # TODO - 'why the log in failed'
-            return '<h1>Error!</h1>'
+        else:
+            flash('user password incorrect, or user does not exist', 'error')
             
     return render_template('login.html')
 
