@@ -18,10 +18,12 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True) # Creates the primary key in a table
     name = db.Column(db.String(120)) # Creates a name that is a string that can only be 120 characters
     completed = db.Column(db.Boolean) # Creates a bool for if the task has been completed
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id')) # Connects the Task ID to the User ID
 
-    def __init__(self, name):
+    def __init__(self, name, owner):
         self.name = name
         self.completed = False
+        self.owner = owner
 
 # The class handles usernames and passwords in a database
 class User(db.Model):
@@ -29,6 +31,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True) # cable for the email/username and the unique=True looks for a unique email
     password = db.Column(db.String(120))
+    tasks = db.relationship('Task', backref='owner') # Populate from from the Task class where the owner property is related
 
     def __init__(self, email, password):
         self.email = email
