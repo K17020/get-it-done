@@ -91,16 +91,19 @@ def logout():
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-
+    
+    owner = User.query.filter_by(email=session['email']).first()
+    
 # This takes the users input from the todo.html and adds it to the database. 
     if request.method == 'POST':
         task_name = request.form['task']
-        new_task = Task(task_name)
+        owner = User.query.filter_by(email=session['email']).first() # Checks to see if the owner is logged into the session. 
+        new_task = Task(task_name, owner)
         db.session.add(new_task)
         db.session.commit()
 
     tasks = Task.query.filter_by(completed=False).all() # Checks to see if the task in the database is True or False and removes it from the page
-    completed_tasks = Task.query.filter_by(completed=True).all() # See above 
+    completed_tasks = Task.query.filter_by(completed=True, owner=owner).all() # See above, Checks to see if the user of the current session is looking at their data
     return render_template('todo.html', title="Get It Done!",  # repost data from the database according to if it has been completed or not
         tasks=tasks, completed_tasks=completed_tasks)
 
