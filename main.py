@@ -40,8 +40,8 @@ class User(db.Model):
 # Checks to see if the user has logged in before displaying the page
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'register']
-    if request.endpoint not in allowed_routes and 'email' not in session:
+    allowed_routes = ['login', 'register'] # the are the allowed app.route if the user is not logged in
+    if request.endpoint not in allowed_routes and 'email' not in session: # if the user is not logged in redirect them to the login page
         return redirect('/login')
 
 
@@ -63,7 +63,7 @@ def login():
 
 @app.route('/register', methods=['POST','GET'])
 def register():
-    if request.method == 'POST':
+    if request.method == 'POST': # if the method is a post request perform the following below
         email = request.form['email']
         password = request.form['password']
         verify = request.form['verify']
